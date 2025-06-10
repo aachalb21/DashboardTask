@@ -11,9 +11,8 @@ export default function HomePage() {
       window.location.replace("/dashboard/agent");
     }
   }, []); // Empty dependency array means this runs once when component mounts
-
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-blue-50">
+    <main className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100">
       <div className="relative px-6 lg:px-8 flex items-center justify-center min-h-screen">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-5xl font-medium tracking-tight text-gray-900 sm:text-6xl">

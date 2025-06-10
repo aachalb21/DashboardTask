@@ -1,1 +1,17 @@
-{"provider":"assemblyai","model":"medical","language":"en-US"}
+[
+  {
+    "provider": "Deepgram",
+    "model": "nova-2-general",
+    "language": "de-CH"
+  },
+  {
+    "provider": "assemblyai",
+    "model": "default",
+    "language": "en"
+  },
+  {
+    "provider": "assemblyai",
+    "model": "default",
+    "language": ""
+  }
+]
