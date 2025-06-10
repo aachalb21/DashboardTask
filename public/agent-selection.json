@@ -1,17 +1,1 @@
-[
-  {
-    "provider": "Deepgram",
-    "model": "nova-2-general",
-    "language": "de-CH"
-  },
-  {
-    "provider": "assemblyai",
-    "model": "default",
-    "language": "en"
-  },
-  {
-    "provider": "assemblyai",
-    "model": "default",
-    "language": ""
-  }
-]
+{"provider":"Deepgram","model":"nova-3","language":"en-US"}
