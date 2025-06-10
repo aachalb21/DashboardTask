@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from 'next/link';
+import { HiUser, HiMail, HiLockClosed, HiPhone } from 'react-icons/hi';
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -48,57 +50,108 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            className="w-full border px-4 py-2 rounded"
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            className="w-full border px-4 py-2 rounded"
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            className="w-full border px-4 py-2 rounded"
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="tel"
-            name="phone"
-            placeholder="Phone (optional)"
-            className="w-full border px-4 py-2 rounded"
-            onChange={handleChange}
-          />
-          <button
-            type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 rounded"
-          >
-            Register
-          </button>
+    <main className="min-h-screen bg-gradient-to-b from-white to-blue-50">
+      <div className="relative px-6 lg:px-8 flex items-center justify-center min-h-screen">
+        <div className="mx-auto w-full max-w-md">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-medium text-gray-900">
+              Create Account
+            </h2>
+            <p className="mt-2 text-gray-600">
+              Join proPAL to get started
+            </p>
+          </div>
 
-        {/* Already have account */}
-        <p className="text-sm text-center text-gray-600 mt-6">
-            Already have an account?{' '}
-            <a href="/login" className="text-blue-600 hover:underline">
-            Login
-            </a>
-        </p>
-        </form>
-        {message && <p className="mt-4 text-center text-sm text-red-500">{message}</p>}
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6 bg-white/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-200 shadow-sm">
+            <div className="space-y-5">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <HiUser className="w-5 h-5" />
+                </div>
+                <input
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all bg-white/50"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <HiMail className="w-5 h-5" />
+                </div>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all bg-white/50"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <HiLockClosed className="w-5 h-5" />
+                </div>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all bg-white/50"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <HiPhone className="w-5 h-5" />
+                </div>
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Phone (optional)"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all bg-white/50"
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3 px-4 rounded-xl hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-200"
+            >
+              Create Account
+            </button>
+
+            {message && (
+              <div className={`p-3 rounded-lg ${
+                message.includes("successful") 
+                  ? "bg-green-50 border border-green-100 text-green-600" 
+                  : "bg-red-50 border border-red-100 text-red-600"
+              }`}>
+                <p className="text-center text-sm">{message}</p>
+              </div>
+            )}
+
+            <div className="text-center text-sm text-gray-600">
+              Already have an account?{' '}
+              <Link href="/login" className="text-blue-600 hover:text-blue-500 font-medium">
+                Sign in
+              </Link>
+            </div>
+          </form>
+        </div>
+
+        {/* Subtle background decoration */}
+        <div className="absolute inset-x-0 -z-10 transform-gpu overflow-hidden blur-3xl">
+          <div className="relative left-[calc(50%)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-blue-200 to-blue-400 opacity-10"></div>
+        </div>
       </div>
     </main>
   );

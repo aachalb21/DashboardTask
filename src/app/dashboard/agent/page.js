@@ -118,19 +118,19 @@ export default function AgentPage() {
 
   return (
     <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Agent Configuration</h1>
+      <h1 className="text-2xl font-bold mb-6 text-[var(--foreground)]">Agent Configuration</h1>
 
       <div className="space-y-4">
         <div>
-          <label className="block mb-1">Select Provider</label>
+          <label className="block mb-1 text-[var(--foreground)]">Select Provider</label>
           <select
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-[var(--card-background)] text-[var(--foreground)] border-[var(--card-border)]"
             value={selectedProvider}
             onChange={handleProviderChange}
           >
             <option value="">Select Provider</option>
             {providers.map((p) => (
-              <option key={p.value} value={p.value}>
+              <option key={p.value} value={p.value} className="bg-[var(--card-background)]">
                 {p.name}
               </option>
             ))}
@@ -139,15 +139,15 @@ export default function AgentPage() {
 
         {models.length > 0 && (
           <div>
-            <label className="block mb-1">Select Model</label>
+            <label className="block mb-1 text-[var(--foreground)]">Select Model</label>
             <select
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded bg-[var(--card-background)] text-[var(--foreground)] border-[var(--card-border)]"
               value={selectedModel}
               onChange={handleModelChange}
             >
               <option value="">Select Model</option>
               {models.map((m) => (
-                <option key={m.value} value={m.value}>
+                <option key={m.value} value={m.value} className="bg-[var(--card-background)]">
                   {m.name}
                 </option>
               ))}
@@ -157,16 +157,16 @@ export default function AgentPage() {
 
         {languages.length > 0 && (
           <div>
-            <label className="block mb-1">Select Language</label>
+            <label className="block mb-1 text-[var(--foreground)]">Select Language</label>
             <select
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded bg-[var(--card-background)] text-[var(--foreground)] border-[var(--card-border)]"
               value={selectedLanguage}
               onChange={handleLanguageChange}
             >
               <option value="">Select Language</option>
-              {languages.map((l) => (
-                <option key={l.value} value={l.value}>
-                  {l.name}
+              {languages.map((language) => (
+                <option key={language.value} value={language.value} className="bg-[var(--card-background)]">
+                  {language.name}
                 </option>
               ))}
             </select>
@@ -180,10 +180,10 @@ export default function AgentPage() {
           Save Configuration
         </button>
          {selectedProvider && selectedModel && selectedLanguage && (
-          <div className="mt-6 p-4 border rounded shadow bg-gray-50">
-            <h2 className="text-lg font-semibold mb-2">Summary</h2>
+          <div className="mt-6 p-4 border rounded shadow bg-[var(--card-background)] border-[var(--card-border)]">
+            <h2 className="text-lg font-semibold mb-2 text-[var(--foreground)]">Summary</h2>
 
-            <div className="text-sm">
+            <div className="text-sm text-[var(--foreground)]">
               <p>
                 <strong>Provider:</strong> {providers.find(p => p.value === selectedProvider)?.name} ({selectedProvider})
               </p>
