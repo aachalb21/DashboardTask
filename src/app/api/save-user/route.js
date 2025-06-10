@@ -1,78 +1,73 @@
-import fs from "fs";
-import path from "path";
+import { NextResponse } from 'next/server';
+import fs from 'fs/promises';
+import path from 'path';
 
 export async function POST(req) {
   try {
     const body = await req.json();
-    // console.log("Received agent config:", body);
-
-    // Path to the users.json file in public folder
-    const filePath = path.join(process.cwd(), "public", "users.json");
+    const filePath = path.join(process.cwd(), 'public', 'users.json');
     
     let users = [];
     
-    // Read existing users if file exists
-    if (fs.existsSync(filePath)) {
-      const fileContent = fs.readFileSync(filePath, "utf8");
+    try {
+      const fileContent = await fs.readFile(filePath, 'utf8');
       users = JSON.parse(fileContent);
+    } catch (error) {
+      // File doesn't exist or can't be read, use empty array
+      console.log('No existing file, creating new one');
     }
     
-    // Add new user to existing array
-    users.push(body);
+    const exists = users.find(u => u.id === body.id);
+    if (!exists) {
+      users.push(body);
+    } else {
+      const index = users.findIndex(u => u.id === body.id);
+      users[index] = body;
+    }
     
-    // Replace the entire file with the updated array
-    fs.writeFileSync(filePath, JSON.stringify(body));
+    // Create directory if it doesn't exist
+    const dir = path.dirname(filePath);
+    try {
+      await fs.mkdir(dir, { recursive: true });
+    } catch (error) {
+      // Directory already exists or can't be created
+      console.log('Directory exists or creation failed:', error);
+    }
+    
+    // Write the entire users array
+    await fs.writeFile(filePath, JSON.stringify(users, null, 2));
 
-    return new Response(JSON.stringify({ 
+    return NextResponse.json({ 
       message: "User saved successfully!", 
       user: body 
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    }, { status: 200 });
+
   } catch (error) {
     console.error("Error saving user:", error);
-    return new Response(JSON.stringify({ error: "Failed to save user config" }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return NextResponse.json(
+      { error: "Failed to save user config" }, 
+      { status: 500 }
+    );
   }
 }
 
-export async function GET(req) {
+export async function GET() {
   try {
-    // Path to the users.json file in public folder
-    const filePath = path.join(process.cwd(), "public", "users.json");
+    const filePath = path.join(process.cwd(), 'public', 'users.json');
     
-    if (!fs.existsSync(filePath)) {
-      return new Response(JSON.stringify({ users: [] }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    try {
+      const fileContent = await fs.readFile(filePath, 'utf8');
+      const users = JSON.parse(fileContent);
+      return NextResponse.json({ users }, { status: 200 });
+    } catch (error) {
+      // File doesn't exist, return empty array
+      return NextResponse.json({ users: [] }, { status: 200 });
     }
-    
-    const fileContent = fs.readFileSync(filePath, "utf8");
-    const users = JSON.parse(fileContent);
-    
-    return new Response(JSON.stringify({ users }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
   } catch (error) {
     console.error("Error fetching users:", error);
-    return new Response(JSON.stringify({ error: "Failed to fetch users" }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return NextResponse.json(
+      { error: "Failed to fetch users" }, 
+      { status: 500 }
+    );
   }
 }

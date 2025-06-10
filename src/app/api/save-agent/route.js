@@ -1,78 +1,77 @@
-import fs from "fs";
-import path from "path";
+import { NextResponse } from 'next/server';
+import fs from 'fs/promises';
+import path from 'path';
 
 export async function POST(req) {
   try {
-    const body = await req.json();
-    // console.log("Received agent config:", body);
+    const configuration = await req.json();
+    
+    // Validate required fields
+    if (!configuration.id || !configuration.provider || !configuration.model || !configuration.language) {
+      return NextResponse.json(
+        { error: "Missing required fields in configuration" },
+        { status: 400 }
+      );
+    }
 
-    // Path to the agent-selection.json file in public folder
-    const filePath = path.join(process.cwd(), "public", "agent-selection.json");
+    const filePath = path.join(process.cwd(), 'public', 'agent-selection.json');
+    let configurations = [];
     
-    let users = [];
-    
-    // Read existing users if file exists
-    if (fs.existsSync(filePath)) {
-      const fileContent = fs.readFileSync(filePath, "utf8");
-      users = JSON.parse(fileContent);
+    try {
+      const fileContent = await fs.readFile(filePath, 'utf8');
+      configurations = JSON.parse(fileContent);
+      if (!Array.isArray(configurations)) {
+        configurations = [];
+      }
+    } catch (error) {
+      console.log('Creating new configurations file');
     }
     
-    // Add new user to existing array
-    users.push(body);
+    // Find existing configuration for this user
+    const index = configurations.findIndex(c => c.id === configuration.id);
     
-    // Replace the entire file with the updated array
-    fs.writeFileSync(filePath, JSON.stringify(body));
+    if (index !== -1) {
+      configurations[index] = configuration;
+    } else {
+      configurations.push(configuration);
+    }
+    
+    // Ensure directory exists
+    await fs.mkdir(path.dirname(filePath), { recursive: true }).catch(() => {});
+    
+    // Write configurations to file
+    await fs.writeFile(filePath, JSON.stringify(configurations, null, 2));
 
-    return new Response(JSON.stringify({ 
-      message: "User saved successfully!", 
-      user: body 
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return NextResponse.json({ 
+      message: "Configuration saved successfully",
+      configuration
+    }, { status: 200 });
+
   } catch (error) {
-    console.error("Error saving user:", error);
-    return new Response(JSON.stringify({ error: "Failed to save user config" }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    console.error("Error saving configuration:", error);
+    return NextResponse.json(
+      { error: "Failed to save configuration: " + error.message },
+      { status: 500 }
+    );
   }
 }
 
-export async function GET(req) {
+export async function GET() {
   try {
-    // Path to the agent-selection.json file in public folder
-    const filePath = path.join(process.cwd(), "public", "agent-selection.json");
+    const filePath = path.join(process.cwd(), 'public', 'agent-selection.json');
     
-    if (!fs.existsSync(filePath)) {
-      return new Response(JSON.stringify({ users: [] }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    try {
+      const fileContent = await fs.readFile(filePath, 'utf8');
+      const configurations = JSON.parse(fileContent);
+      return NextResponse.json({ configurations }, { status: 200 });
+    } catch (error) {
+      return NextResponse.json({ configurations: [] }, { status: 200 });
     }
-    
-    const fileContent = fs.readFileSync(filePath, "utf8");
-    const users = JSON.parse(fileContent);
-    
-    return new Response(JSON.stringify({ users }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
   } catch (error) {
-    console.error("Error fetching users:", error);
-    return new Response(JSON.stringify({ error: "Failed to fetch users" }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    console.error("Error fetching configurations:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch configurations" },
+      { status: 500 }
+    );
   }
 }

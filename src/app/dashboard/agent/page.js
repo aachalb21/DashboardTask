@@ -93,26 +93,45 @@ export default function AgentPage() {
   // Save Configuration Function 
   const handleSave = async () => {
     try {
+      // Generate a unique ID for the configuration
+      const userId = localStorage.getItem('userId') || Date.now().toString();
+      localStorage.setItem('userId', userId);
+
+      const configuration = {
+        id: userId,
+        provider: {
+          name: providers.find(p => p.value === selectedProvider)?.name,
+          value: selectedProvider
+        },
+        model: {
+          name: models.find(m => m.value === selectedModel)?.name,
+          value: selectedModel
+        },
+        language: {
+          name: languages.find(l => l.value === selectedLanguage)?.name,
+          value: selectedLanguage
+        },
+        timestamp: new Date().toISOString()
+      };
+
       const response = await fetch('/api/save-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          provider: selectedProvider,
-          model: selectedModel,
-          language: selectedLanguage,
-        }),
+        body: JSON.stringify(configuration),
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        alert('✅ Configuration saved!');
-      } else {
-        alert('❌ Failed to save configuration: ' + data.error);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to save configuration');
       }
+
+      const data = await response.json();
+      alert('✅ Configuration saved successfully!');
     } catch (error) {
-      alert('❌ Error: ' + error.message);
+      console.error('Save error:', error);
+      alert('❌ Failed to save configuration: ' + (error.message || 'Unknown error'));
     }
   };
 
